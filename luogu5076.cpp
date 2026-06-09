@@ -15,5 +15,19 @@ int rak(int x,int root){
         if(x<t[root].value){
             return rak(x,t[root].left);
         }
+        if(x>t[root].value){
+            return rak(x,t[root].right) + t[t[root].left].size + t[root].num;
+        }
+        return t[t[root].left].size + t[root].num;
     }
+    return 1;
+}
+int kth(int x,int root){
+    if(x<=t[t[root].left].size){
+        return kth(x,t[root].left);
+    }
+    if(x<=t[t[root].left].size+t[root].num){
+        return t[root].value;
+    }
+    return kth(x-t[t[root].left].size-t[root].num,t[root].right);
 }
