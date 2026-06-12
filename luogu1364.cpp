@@ -24,5 +24,6 @@ int main(){
         ans=min(ans,cal(i,0));
     }
     cout<<ans<<endl;
+    system("pause");
     return 0;
 }
