@@ -11,7 +11,7 @@ struct node{
 inline void update(int root){
     t[root].size=t[t[root].left].size + t[t[root].right].size + t[root].num;
 }
-//查询数字x的排名
+//查询数字x的排名，如果x有多个，返回最小的排名
 //比节点小说明在左边，大说明在右边
 int rak(int x,int root){
     if(root){
@@ -21,15 +21,16 @@ int rak(int x,int root){
         if(x>t[root].value){
             return rak(x,t[root].right) + t[t[root].left].size + t[root].num;
         }
-        return t[t[root].left].size + t[root].num;
+        return t[t[root].left].size + 1;
     }
     return 1;
 }
+//查询排名为x的数
 int kth(int x,int root){
     if(x<=t[t[root].left].size){
         return kth(x,t[root].left);
     }
-    if(x<=t[t[root].left].size+t[root].num){
+    if(x<=t[t[root].left].size + t[root].num){
         return t[root].value;
     }
     return kth(x-t[t[root].left].size-t[root].num,t[root].right);
@@ -58,14 +59,14 @@ void insert(int x,int&root){
 int main(){
     cin>>n;
     int num=0;
-    t[root=++cnt]=node(0,0,1,2147483647);
+    t[root=++cnt]=node(0,0,1,2147483647);//初始化根节点
     while(n--){
         cin>>opt>>x;
         num++;
         if(opt==1) cout<<rak(x,root)<<endl;
         else if(opt==2) cout<<kth(x,root)<<endl;
-        else if(opt==3) cout<<kth(rak(x,root)-1,root)<<endl;
-        else if(opt==4) cout<<kth(rak(x+1,root),root)<<endl;
+        else if(opt==3) cout<<kth(rak(x,root)-1,root)<<endl;//查询x的前驱，只需要查询x的排名-1的数
+        else if(opt==4) cout<<kth(rak(x+1,root),root)<<endl;//查询x的后驱，只需要查询(x+1)的排名的数，因为x的排名是取最小的，如果有多个x，x的排名只是最小的，所以不能取x的排名+1的那个数
         else num--,insert(x,root);
     }
     return 0;
