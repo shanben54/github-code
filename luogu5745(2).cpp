@@ -1,3 +1,5 @@
+//计算这个数组里面，相邻几个数的和，不大于m的情况下，使得这个和最大
+//这题是使用栈的模拟来解决，复杂度为o(n)
 #include<bits/stdc++.h>
 using namespace std;
 int a[8000010];
