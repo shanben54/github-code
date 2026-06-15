@@ -1,3 +1,4 @@
+//城镇修路问题，和luogu1551是类似的做法
 #include<bits/stdc++.h>
 using namespace std;
 int fa[1010];
