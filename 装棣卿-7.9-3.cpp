@@ -1,3 +1,4 @@
+//输入一个数组，输出这个数组去重后的数组
 #include<bits/stdc++.h>
 using namespace std;
 int main(){
