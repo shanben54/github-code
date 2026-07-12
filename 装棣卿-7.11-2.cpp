@@ -1,3 +1,4 @@
+//打印杨辉三角形，每层第一个和最后一个是1，其他的等于上方和左上方的和
 #include<bits/stdc++.h>
 using namespace std;
 int main(){
