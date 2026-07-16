@@ -30,7 +30,7 @@ int main(){
             //没有找到就把这个字符加入c,继续一一遍历
         }
     }
-    cout<<s<<endl;
+    cout<<c<<endl;
     system("pause");
     return 0;
 }
