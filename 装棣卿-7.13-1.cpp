@@ -1,3 +1,4 @@
+//唉这一天天的事情这么多 ，都没啥时间写代码了
 #include<bits/stdc++.h>
 using namespace std;
 int main(){
