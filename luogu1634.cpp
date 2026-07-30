@@ -1,4 +1,5 @@
 //第一次提交还没通过，思索半天发现把int改成long lon就可以了，这提醒我要注意一下数据范围和类型#include<bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 int main(){
     long long x,n;
