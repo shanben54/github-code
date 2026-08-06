@@ -33,17 +33,17 @@ Status ListInsert(SqList *L,int i,ElemType e){
     L->length++;//线性表长度更新
     return ok;
 }
-
+//删除第i个元素
 Status ListDelete(SqList *L,int i,ElemType *e){
     int k;
-    if(L->length==0) return error;
-    if(i<1||i>L->length) return error;
-    *e=L->date[i-1];
-    if(i<L->length){
+    if(L->length==0) return error;//如果线性表为空不能删除
+    if(i<1||i>L->length) return error;//i的值不合规也不能删除
+    *e=L->date[i-1];//将第i个元素的值赋给指针e
+    if(i<L->length){//如果i是最后一个元素就不用移动了
         for(k=i;k<L->length;k++){
-            L->date[k-1]=L->date[k];
+            L->date[k-1]=L->date[k];//将i之后的元素都向前移动一位
         }
     }
-    L->length--;
+    L->length--;//线性表长度更新
     return ok;
 }
