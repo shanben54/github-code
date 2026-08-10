@@ -24,3 +24,11 @@ Status Push(SqStack *S,SElemType e){
 }
 
 //S栈顶元素出栈
+Status Pop(SqStack *S,SElemType *e){
+    if(S->top==-1){
+        return error;
+    }//如果栈是空的就报错
+    *e=S->data[S->top];//将栈顶的元素赋值给e
+    S->top--;//top的下标减小
+    return ok;
+}
