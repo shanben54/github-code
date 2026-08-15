@@ -7,6 +7,9 @@ typedef int TElemType;
 #define OVERFLOW -2
 typedef int Status;
 
+char str[maxsize];
+int index=0;
+
 //二叉树的链表结构
 typedef struct BiTNode{
     TElemType data;//结点储存的数据
@@ -37,4 +40,23 @@ void PostOrderTraverse(BiTree T){
     PostOrderTraverse(T->lchild);//先遍历左子树
     PostOrderTraverse(T->rchild);//再遍历右子树
     printf("%c",T->data);//最后打印结点
+}
+
+
+//二叉树的建立
+//根据输入的前序序列来建立一颗二叉树
+void CreateBiTree(BiTree *T){//传入二级指针，因为要修改这个根结点指针的值
+    TElemType ch;
+    scanf(" %c",&ch);
+    if(ch=='#'){
+        *T=NULL;//如果是#代表空树
+    }else{
+        *T=(BiTree)malloc(sizeof(BiTNode));//新建一个结点，并把这个结点的地址给根结点指针
+        if(!*T){
+            exit(OVERFLOW);
+        }//内存分配失败就退出
+        (*T)->data=ch;//把数据存入结点
+        CreateBiTree(&(*T)->lchild);//对左子树继续建立
+        CreateBiTree(&(*T)->rchild);//对右子树继续建立
+    }
 }
