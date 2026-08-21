@@ -49,3 +49,35 @@ void CreateALGraph(GraphAdjList *G){
         G->adjList[j].firstedge=e;//同样的方法对顶点j的边表链表添加数据
     }
 }
+
+
+//邻接表的深度优先遍历
+typedef int Boolean;
+Boolean visited[MAXVEX];//访问标志数组
+
+//深度优先递归算法
+void DFS(GraphAdjList GL,int i){
+    EdgeNode *p;
+    visited[i]=1;//修改结点访问状态
+    printf("%c",GL.adjList[i].data);//打印结点
+    p=GL.adjList[i].firstedge;//查询该结点的邻接结点
+    while(p){//如果存在邻接结点
+        if(!visited[p->adjvex]){
+            DFS(GL,p->adjvex);//如未访问则对该结点继续遍历
+        }
+        p=p->next;//查询下一个邻接结点
+    }
+}
+
+//深度优先遍历邻接表
+void DFSTraverse(GraphAdjList GL){
+    int i;
+    for(i=0;i<GL.numNodes;i++){
+        visited[i]=0;
+    }//对所有结点的访问状态初始化
+    for(i=0;i<GL.numNodes;i++){//对所有结点调用一下递归算法，防止未连通图，连通图只用调用一次
+        if(!visited[i]){
+            DFS(GL,i);
+        }
+    }
+}
