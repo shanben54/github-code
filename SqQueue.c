@@ -25,6 +25,16 @@ int QueueLength(SqQueue Q){
     return (Q.rear-Q.front+maxsize)%maxsize;//计算队列的通用公式，取模是为了防止超出长度
 }
 
+//判断队列是否为空
+Status QueueEmpty(SqQueue Q){
+    if(Q.front==Q.rear){
+        return ok;
+    }else{
+        return error;
+    }
+}
+
+
 //在队尾插入元素e
 Status EnQueue(SqQueue *Q,QElemType e){
     if((Q->rear+1)%maxsize==Q->front){
