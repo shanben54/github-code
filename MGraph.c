@@ -153,3 +153,47 @@ void BFSTraverse(MGraph G){
         }
     }
 }
+
+
+
+//Prim算法生成最小生成树
+/*从某个顶点出发，然后找到去未在生成树内的顶点的最短边，同时把这个顶点加入生成树，再不断循环找最短边，
+只找和未在生成树的顶点连通的边，找到n-1条边后就是最小生成树*/
+void MiniSpanTree_Prim(MGraph G){
+    int min,i,j,k;
+    int adjvex[MAXVEX];//储存顶点最短边相关的顶点值，比如说adjvex[1]=0，说明已生成树中和顶点1构成最短边的顶点是0
+    int lowcost[MAXVEX];//储存顶点最短边的权值，比如说lowcost[1]=10，说明顶点1和已生成树之间最短边的权值是10
+    
+    //对数据进行初始化，从顶点0出发
+    lowcost[0]=0;//意思是顶点0已经在生成树里面了，只要lowcost[i]=0,说明i已经在生成树里
+    adjvex[0]=0;//意思是我们从顶点0开始
+    for(i=1;i<G.numNodes;i++){
+        lowcost[i]=G.arc[0][i];//读取邻接矩阵里第1行，也就是顶点0相邻接的顶点
+        adjvex[i]=0;//目前只有顶点0，所以都先初始化为0
+    }
+    
+    //循环n-1次，生成n-1条边，生成最小生成树
+    for(i=1;i<G.numNodes;i++){//因为要生成n-1条边，所以循环n-1次
+        min=INFINITY;//min用来记录当前最小值，先初始化为很大的值
+        j=1;k=0;//j用来循环，k用来记录目标顶点的下标
+
+        //找到最短的边
+        while(j<G.numNodes){//每个顶点都循环一下
+            if(lowcost[j]!=0&&lowcost[j]<min){//lowcost[j]!=0是为了判断这个顶点没有在已生成树里
+                min=lowcost[j];//如果权值更小就更新最小值
+                k=j;//记录下最小权值对应的顶点
+            }
+            j++;
+        }
+        printf("(%d,%d)\n",adjvex[k],k);//打印边的两个顶点，adjvex[k]是和顶点k构成最短边的已生成树顶点
+
+        //根据新加入的结点
+        lowcost[k]=0;//把顶点k更新为已在生成树内
+        for(j=1;j<G.numNodes;j++){//循环所有顶点
+            if(lowcost[j]!=0&&G.arc[k][j]<lowcost[j]){//如果有未在生成树里面并且和新加入的顶点k之间的权更小的顶点
+                lowcost[j]=G.arc[k][j];//将lowcost[j]的值更新为顶点j和k之间的权
+                adjvex[j]=k;//和顶点j构成最短边的顶点更新为k
+            }
+        }
+    }
+}
