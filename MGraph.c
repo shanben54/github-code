@@ -3,6 +3,7 @@
 typedef char VertexType;
 typedef int EdgeType;
 #define MAXVEX 100
+#define MAXEDGE 300
 #define INFINITY 65535
 
 //图的邻接矩阵结构定义
@@ -194,6 +195,45 @@ void MiniSpanTree_Prim(MGraph G){
                 lowcost[j]=G.arc[k][j];//将lowcost[j]的值更新为顶点j和k之间的权
                 adjvex[j]=k;//和顶点j构成最短边的顶点更新为k
             }
+        }
+    }
+}
+
+
+//Kruskal算法生成最小生成树
+
+//边集数组的结构定义
+typedef struct{
+    int begin;
+    int end;
+    int weight;
+}Edge;
+
+//查找连线顶点的尾部下标
+int Find(int *parent,int f){
+    while(parent[f]>0){
+        f=parent[f];
+    }//如果parent[f]的值不为0，说明有指向下一个顶点，为0的顶点说明是整个连线的顶点
+    return f;
+}
+
+//Kruskal算法
+void MiniSpanTree_Kruskal(MGraph G){
+    int i,n,m;
+    Edge edges[MAXEDGE];//定义边集数组
+    int parent[MAXVEX];//用于判断边的两个顶点是否已在一个连线上
+    for(i=0;i<G.numNodes;i++){
+        parent[i]=0;
+    }//对parent数组初始化
+    
+    //生成最小生成树
+    for(i=0;i<G.numEdges;i++){//循环所有边
+        //虽然Find函数要求传入指针，但是也可以直接传入数组名，相当于传入数组第一个元素的地址，也就是&parent[0]
+        n=Find(parent,edges[i].begin);//找到边第一个顶点所在连线的顶点
+        m=Find(parent,edges[i].end);//找到第二个顶点所在连线的顶点
+        if(n!=m){//如果n不等于m说明两个顶点不在一个连线上，不会形成环
+            parent[n]=m;//将两个连线变成一个连线，新连线顶点为m
+            printf("(%d,%d) %d\n",edges[i].begin,edges[i].end,edges[i].weight);//打印这条边的两个顶点和权值
         }
     }
 }
