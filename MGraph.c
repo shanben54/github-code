@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<stdlib.h>
 
 typedef char VertexType;
 typedef int EdgeType;
@@ -209,6 +210,13 @@ typedef struct{
     int weight;
 }Edge;
 
+//比较函数，用于边集数组的排序
+int cmpEdge(const void *a,const void *b){//只能传入void类型的指针
+    Edge *ea=(Edge *)a;
+    Edge *eb=(Edge *)b;//在函数内部再把void类型指针强制转化
+    return ea->weight>eb->weight;//按权的大小比较
+}
+
 //查找连线顶点的尾部下标
 int Find(int *parent,int f){
     while(parent[f]>0){
@@ -226,6 +234,23 @@ void MiniSpanTree_Kruskal(MGraph G){
         parent[i]=0;
     }//对parent数组初始化
     
+    //将邻接矩阵转化为边集数组
+    int cnt=0;//边集数组下标
+    //对邻接矩阵进行遍历，因为是无向图，只需要遍历一半
+    for(int a=0;a<G.numNodes;a++){
+        for(int b=a+1;b<G.numNodes;b++){
+            if(G.arc[a][b]!=0){//如果找到了边
+                edges[cnt].begin=a;
+                edges[cnt].end=b;
+                edges[cnt].weight=G.arc[a][b];//边集数组储存边的数据
+                cnt++;
+            }
+        }
+    }
+    G.numEdges=cnt;//更新图的边数
+    qsort(edges,G.numEdges,sizeof(int),cmpEdge);//对边集数组按权从小到大排序
+    //qsort需要传入四个数据，1.要排序的数组，2.数组要排序的数量，3.数组每个元素的大小，4.排序函数(只能传入两个const void*的数据)
+
     //生成最小生成树
     for(i=0;i<G.numEdges;i++){//循环所有边
         //虽然Find函数要求传入指针，但是也可以直接传入数组名，相当于传入数组第一个元素的地址，也就是&parent[0]
