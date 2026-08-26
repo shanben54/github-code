@@ -295,3 +295,50 @@ void ShortestPath_Dijkstra(MGraph G,int v0,Patharc *P,ShortPathTable *D){
         }
     }
 }
+
+
+//Floyd算法求最短路径
+/*可以求任意顶点到任意顶点的最短路径，先将两个顶点直接建立路径，再依次把所有顶点当作中转站点，看看有没有路径会变得更短
+把所有结点都当过中转站后就找到所有的最短路径*/
+typedef int patharc[MAXVEX][MAXVEX];//用于记录两个顶点之间路径的权值
+typedef int shortpathtable[MAXVEX][MAXVEX];//用于记录路径，如果是[v][w]的意思就是从v到w第一个要经过的顶点
+
+void ShortestPath_Floyd(MGraph G,patharc *P,shortpathtable *D){
+    int v,w,k;
+    
+    //对两个数组初始化
+    for(v=0;v<G.numNodes;v++){
+        for(w=0;w<G.numNodes;w++){
+            (*D)[v][w]=G.arc[v][w];//D初始化两个顶点的权值
+            (*P)[v][w]=w;//P初始化为终点顶点
+        }
+    }
+
+    //进行遍历，顶点依次成为中转站，看看路径会不会更短
+    for(k=0;k<G.numNodes;k++){//中转站结点
+        for(v=0;v<G.numNodes;v++){
+            for(w=0;w<G.numNodes;w++){
+                if((*D)[v][w]>(*D)[v][k]+(*D)[k][w]){//判断加入新的中转站后两个顶点之间的路径有没有变短
+                    (*D)[v][w]=(*D)[v][k]+(*D)[k][w];//更新路径长度
+                    (*P)[v][w]=(*P)[v][k];//更新路径过程，把k加入路径
+                }
+            }
+        }
+    }
+
+    //打印路径
+    printf("各顶点间最短路径如下:\n");
+    for(v=0;v<G.numNodes;v++){
+        for(w=v+1;w<G.numNodes;w++){
+            printf("v%d-v%d weight:%d",v,w,D[v][w]);
+            k=P[v][w];//获取第一个路径顶点下标
+            printf("  path:%d",v);//打印起点
+            while(k!=w){//如果没到终点
+                printf(" -> %d",k);//打印路径过程顶点
+                k=P[k][w];//获取下一个路径顶点下标
+            }
+            printf(" -> %d\n",w);//打印终点
+        }
+        printf("\n");
+    }
+}
