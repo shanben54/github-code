@@ -62,3 +62,38 @@ int Interpolation_Search(int *a,int n,int key){
     }
     return 0;
 }
+
+//斐波那契查找
+//折半查找是对半折，而斐波那契查找是按黄金比例来折
+//利用斐波那契数列的性质，F[k]-1=(F[k-1]-1)+(F[k-2]-1)+1,左半区长度为F[k-1]-1，右半区长度为F[k-2]-1
+#define maxsize 30
+int F[maxsize]={0,1,1,2,3,5,8,13,21,34,55,89,144};//斐波那契数列
+int Fibonacci_Search(int *a,int n,int key){
+    int low,high,mid,i,k;
+    low=1;
+    high=n;
+    k=0;
+    while(n>F[k]-1){
+        k++;
+    }//找到n在斐波那契数列中的位置
+    for(i=n;i<F[k]-1;i++){
+        a[i]=a[n];
+    }//把缺少的空位填补防止查找时越界
+    while(low<=high){
+        mid=low+F[k-1]-1;
+        if(key<a[mid]){//如果mid值大了，说明key在左半区，更新high的值和k的大小，左半区长度为F[k-1]-1,所以k-1
+            high=mid-1;
+            k=k-1;
+        }else if(key>a[mid]){//如果mid值小了，说明key在右半区，更新high的值和k的大小，右半区长度为F[k-2]-1,所以k-2
+            low=mid+1;
+            k=k-2;
+        }else{//直到mid值等于key
+            if(mid<=n){//mid小于n就直接返回下标
+                return mid;
+            }else{
+                return n;//mid大于n说明是补全数值，返回n
+            }
+        }
+    }
+    return 0;
+}
