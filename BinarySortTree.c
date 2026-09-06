@@ -47,7 +47,7 @@ Status InsertBST(BiTree *T,int key){
         }
         return TRUE;
     }
-    else{
+    else{//如果原本有这个数据就不添加
         return FALSE;
     }
 }
