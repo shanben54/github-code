@@ -55,43 +55,45 @@ Status InsertBST(BiTree *T,int key){
 //二叉排序树的删除
 
 //从二叉排序树里删除p结点，并重连左或者右子树
+//删除结点的函数
 Delete(BiTree *p){
     BiTree q,s;
-    if((*p)->rchild=NULL){//右子树为空只要连左子树
+    if((*p)->rchild=NULL){//右子树为空只要连左子树，如果是叶子结点也是这样操作
         q=*p;
         *p=(*p)->lchild;//p的左子树成为新的p结点
-        free(q);
+        free(q);//释放这个结点
     }else if((*p)->lchild==NULL){//左子树为空只要连右子树
         q=*p;
-        *p=(*p)->rchild;
-        free(q);
+        *p=(*p)->rchild;//p的右子树成为新的p结点
+        free(q);//释放结点
     }else{//左右子树都不为空
         q=*p;
         s=(*p)->lchild;//指向左子树
-        while(s->rchild){//一路向右找到最右边的结点，也就是p的前驱
+        while(s->rchild){//一路向右找到最右边的结点，也就是p的前驱，此时s是p的前驱，q是s的双亲
             q=s;
             s=s->rchild;
         }
-        (*p)->data=s->data;//用p的前驱结点代替p
-        if(q!=*p){
-            q->rchild=s->rchild;
-        }else{
-            q->lchild=s->lchild;
+        (*p)->data=s->data;//用p的前驱结点数据代替p
+        if(q!=*p){//q,p不一样说明p的左孩子有右子树，p的前驱不是他的左孩子，q的右孩子是s
+            q->rchild=s->lchild;//用s的左子树代替s
+        }else{//p,q相同，说明p的左孩子没有右子树，s指向的是p和q的左孩子
+            q->lchild=s->lchild;//用s的左子树代替s
         }
+        free(s);
     }
     return TRUE;
 }
 
 Status DeleteBST(BiTree *T,int key){
     if(*T){
-        return FALSE;
+        return FALSE;//没有找到这个值就返回FALSE
     }
     else{
-        if(key==(*T)->data){
+        if(key==(*T)->data){//找到了这个结点就进行删除
             return Delete(T);
-        }else if(key<(*T)->data){
+        }else if(key<(*T)->data){//小于当前结点的值就去左子树查找
             return DeleteBST(&(*T)->lchild,key);
-        }else{
+        }else{//大于当前结点的值就去右子树查找
             return DeleteBST(&(*T)->rchild,key);
         }
     }
