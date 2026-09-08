@@ -83,7 +83,7 @@ Delete(BiTree *p){
     }
     return TRUE;
 }
-
+//二叉排序树的删除
 Status DeleteBST(BiTree *T,int key){
     if(*T){
         return FALSE;//没有找到这个值就返回FALSE
