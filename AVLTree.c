@@ -106,66 +106,67 @@ void RightBalance(BiTree *T){
     }
 }
 
-Status InsertAVL(BiTree *T,int e,Status *taller){
-    if(!*T){
-        *T=(BiTree)malloc(sizeof(BiTNode));
-        (*T)->data=e;
-        (*T)->lchild=(*T)->rchild=NULL;
-        (*T)->bf=EH;
-        *taller=TRUE;
+//平衡二叉树的实现，插入结点
+Status InsertAVL(BiTree *T,int e,Status *taller){//T为树的根结点，e为添加的数据，taller用于记录以T为根结点的树的高度是否变化
+    if(!*T){//如果当前的树为空
+        *T=(BiTree)malloc(sizeof(BiTNode));//新建结点，开辟内存
+        (*T)->data=e;//储存数据
+        (*T)->lchild=(*T)->rchild=NULL;//左右孩子为空
+        (*T)->bf=EH;//平衡度为0
+        *taller=TRUE;//树长高
     }else{
-        if(e==(*T)->data){
+        if(e==(*T)->data){//如果当前树里已经有这个数据，返回FALSE
             *taller=FALSE;
             return FALSE;
         }
-        if(e<(*T)->data){
-            if(!InsertAVL(&(*T)->lchild,e,taller)){
+        if(e<(*T)->data){//如果e小于当前结点的数据，就去T的左子树继续插入
+            if(!InsertAVL(&(*T)->lchild,e,taller)){//如果在左子树没有插入就返回FALSE
                 return FALSE;
             }
-            if(*taller){
+            if(*taller){//如果左子树长高了，在T左子树插入了结点，对T的平衡度进行调整
                 switch((*T)->bf){
-                    case LH:{
-                        LeftBalance(T);
-                        *taller=FALSE;
+                    case LH:{//原本T是左高，现在平衡度大于1，因此需要进行平衡度调整
+                        LeftBalance(T);//平衡度调整
+                        *taller=FALSE;//调整后T的树的高度和插入结点前一样，没有长高
                         break;
                     }
-                    case EH:{
-                        (*T)->bf=LH;
-                        *taller=TRUE;
+                    case EH:{//原本左右一样高，现在是左高
+                        (*T)->bf=LH;//T的平衡度为左高
+                        *taller=TRUE;//T的树有长高
                         break;
                     }
-                    case RH:{
-                        (*T)->bf=EH;
-                        *taller=FALSE;
+                    case RH:{//原本右高，现在两边一样高
+                        (*T)->bf=EH;//T的平衡度为一样高
+                        *taller=FALSE;//T的树的高度没有变化
                         break;
                     }
                 }
             }
         }
-        else{
-            if(!InsertAVL(&(*T)->rchild,e,taller)){
+        else{//e大于当前结点的数据，去T的右子树继续插入
+            if(!InsertAVL(&(*T)->rchild,e,taller)){//在右子树没有插入成功就返回FALSE
                 return FALSE;
             }
-            if(*taller){
+            if(*taller){//如果右子树的高度发生变化，也就是在T的右子树插入了结点，对T的平衡度进行调整
                 switch((*T)->bf){
-                    case LH:{
-                        (*T)->bf=EH;
-                        *taller=FALSE;
+                    case LH:{//原本是左高，现在两边一样高
+                        (*T)->bf=EH;//T的平衡度为一样高
+                        *taller=FALSE;//T的树高度没有变化
                         break;
                     }
-                    case EH:{
-                        (*T)->bf=RH;
-                        *taller=TRUE;
+                    case EH:{//原本是一样高，现在是右高
+                        (*T)->bf=RH;//T的平衡度为右高
+                        *taller=TRUE;//T的树长高
                         break;
                     }
-                    case RH:{
-                        RightBalance(T);
-                        *taller=FALSE;
+                    case RH:{//原本是右高，现在右边更高了，需要进行平衡度调整
+                        RightBalance(T);//对T进行右平衡度调整
+                        *taller=FALSE;//调整后T的树高度没有变化
                         break;
                     }
                 }
             }
         }
     }
-    return FALSE;
+    return TRUE;//没有插入失败就返回TRUE表示插入成功
 }
