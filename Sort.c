@@ -93,22 +93,25 @@ void InsertSort(SqList *L){
 }
 
 //希尔排序
+//插入排序的改良版，先设定增量，把一定增量差的元素进行排序，整体达到基本有序，再一步步减少增量，最后完整进行一次插入排序
 void ShellSort(SqList *L){
     int i,j,k=0;
-    int increment=L->length;
+    int increment=L->length;//增量，先定义为序列长度
     do{
-        increment=increment/3+1;
-        for(i=increment+1;i<=L->length;i++){
-            if(L->r[i]<L->r[i-increment]){
+        increment=increment/3+1;//增量序列
+        for(i=increment+1;i<=L->length;i++){//从某个值开始一直到序列尾
+            if(L->r[i]<L->r[i-increment]){//和前增量元素对比
                 L->r[0]=L->r[i];
-                for(j=i-increment;j>0&&L->r[0]<L->r[j];j-=increment){
+                for(j=i-increment; j>0&&L->r[0]<L->r[j]; j-=increment){
                     L->r[j+increment]=L->r[j];
                 }
                 L->r[j+increment]=L->r[0];
+                //这几步操作其实是交换两个元素，和插入排序的操作很像，但是不是加减1，而是增量increment
+                //当增量为1时，这其实就是插入排序
             }
         }
     }
-    while(increment>1);
+    while(increment>1);//增量最后一个值是1
 }
 
 //堆调整函数
