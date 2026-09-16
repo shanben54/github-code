@@ -114,71 +114,83 @@ void ShellSort(SqList *L){
     while(increment>1);//增量最后一个值是1
 }
 
+//堆排序
+//高级版的选择排序，但是利用了堆来找到未排序数据里的最大值
+//堆就是完全二叉树，这里不用定义新的结构，而是利用完全二叉树的性质来进行调整
+//第i个元素的孩子就是2i和2i+1，长度为n的数组的最大中间结点就是[n/2]，[i]表示不大于i的最大整数
+void HeapSort(SqList *L){
+    int i;
+    for(i=L->length/2;i>0;i--){//长度除于2就是中间结点的最大下标，倒着一步步调整，可以保证调整的时候结点的孩子是子树里的最大数据
+        HeapAdjust(L,i,L->length);//先对所以中间结点进行堆调整，最后调整根结点，这样就构建好了大顶堆
+    }
+    //再根据大顶堆进行排序
+    for(i=L->length;i>1;i--){
+        swap(L,1,i);//先把首位结点交换，其实就是把最大的数据放到数组末尾了
+        HeapAdjust(L,1,i-1);//再对根结点进行堆调整，找到最大的数据，注意调整的范围，此时数组末尾已经是排序好的数据
+    }
+}
+
 //堆调整函数
-void HeapAdjust(SqList *L,int s,int m){
+//以s为根结点，遍历s的子树，把子树里面最大的值调整为s结点
+//这里的树并没有在数据里体现出来，而是运用完全二叉树的性质，根据数据下标来调整
+//由于也会对s的孩子进行堆调整，所以s的孩子就是子树里最大的值
+//如果孩子更大就赋值给根结点，然后s指向孩子结点，再继续遍历，将较大的数据都往前移，最后将初始根结点的值赋值给最后一个操作的结点
+//这个过程有点像插入排序，先找个标兵记录数据，然后更大的数据都往前移动，最后把初始数据放在最后
+void HeapAdjust(SqList *L,int s,int m){//将L[s...m]调整成大顶堆
     int temp,j;
-    temp=L->r[s];
-    for(j=2*s;j<=m;j*=2){
-        if(j<m&&L->r[j]<L->r[j+1]){
+    temp=L->r[s];//标兵，记录初始值
+    for(j=2*s;j<=m;j*=2){//沿s的子树进行查找
+        if(j<m&&L->r[j]<L->r[j+1]){//如果右孩子更大就指向右孩子
             ++j;
         }
         if(temp>=L->r[j]){
-            break;
+            break;//如果小于s的值就略过
         }
-        L->r[s]=L->r[j];
-        s=j;
+        L->r[s]=L->r[j];//原本s的位置的数据更新为更大的j
+        s=j;//s更新为j
     }
-    L->r[s]=temp;
-}
-
-//堆排序
-void HeapSort(SqList *L){
-    int i;
-    for(i=L->length/2;i>0;i--){
-        HeapAdjust(L,i,L->length);
-    }
-    for(i=L->length;i>1;i--){
-        swap(L,1,i);
-        HeapAdjust(L,1,i-1);
-    }
+    L->r[s]=temp;//把空的位置赋值为初始s的值
 }
 
 //归并排序
+void MergeSort(SqList *L){
+    MSort(L->r,L->r,1,L->length);
+}
 
-void Merge(int SR[],int TR[],int i,int m,int n){
+//对数组进行归并排序
+//先开辟新的数组用于记录分半的数据，再继续递归，直到只剩一个数据，然后返回上一层，将平分的两个数组进行合并，再继续上一层，直到最初
+void MSort(int SR[],int TR1[],int s,int t){//将数组SR归并排序后放入数组TR1里，s,t表示需要排序的范围
+    int m;
+    int TR2[MAXSIZE+1];//开辟新数组用于记录平分的数据
+    if(s==t){
+        TR1[s]=SR[s];//如果范围为1，那就直接吧SR这个元素放入TR1
+    }else{
+        m=(s+t)/2;//将SR平分为SR[s...m]和SR[m+1...t]
+        MSort(SR,TR2,s,m);//对左半边递归归并排序
+        MSort(SR,TR2,m+1,t);//对右半边递归归并排序
+        Merge(TR2,TR1,s,m,t);//再把两半边合并排序成最终数组
+    }
+}
+
+//对两半有序的数组进行合并
+void Merge(int SR[],int TR[],int i,int m,int n){//将数组SR[i...m]和SR[m+1...n]合并排序后放入数组TR
     int j,k,l;
-    for(j=m+1,k=i;i<=m&&j<=n;k++){
-        if(SR[i]<SR[j]){
-            TR[k]=SR[i++];
-        }else{
-            TR[k]=SR[j++];
+    for(j=m+1,k=i;i<=m&&j<=n;k++){//i是左半数组的下标，j是右半数组的下标，k是数组TR的下标
+        if(SR[i]<SR[j]){//i更小就先放入i
+            TR[k]=SR[i++];//i增加
+        }else{//j更小就放入j
+            TR[k]=SR[j++];//j增加
         }
     }
+    //处理剩余的元素
     if(i<=m){
         for(l=0;l<=m-i;l++){
-            TR[k+l]=SR[i+l];
+            TR[k+l]=SR[i+l];//i还剩就继续添加直到m
         }
     }
     if(j<=n){
         for(l=0;l<=n-j;l++){
-            TR[k+l]=SR[j+l];
+            TR[k+l]=SR[j+l];//j还剩就继续添加直到n
         }
     }
-}
-
-void MSort(int SR[],int TR1[],int s,int t){
-    int m;
-    int TR2[MAXSIZE+1];
-    if(s==t){
-        TR1[s]=SR[s];
-    }else{
-        m=(s+t)/2;
-        MSort(SR,TR2,s,m);
-        MSort(SR,TR2,m+1,t);
-        Merge(TR2,TR1,s,m,t);
-    }
-}
-
-void MergeSort(SqList *L){
-    MSort(L->r,L->r,1,L->length);
 }
