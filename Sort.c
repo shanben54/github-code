@@ -153,6 +153,7 @@ void HeapAdjust(SqList *L,int s,int m){//将L[s...m]调整成大顶堆
 }
 
 //归并排序
+//把数组进行拆半，对这两半继续归并排序使得他们有序，再把这两半合并成最终有序的数组
 void MergeSort(SqList *L){
     MSort(L->r,L->r,1,L->length);
 }
@@ -173,6 +174,7 @@ void MSort(int SR[],int TR1[],int s,int t){//将数组SR归并排序后放入数
 }
 
 //对两半有序的数组进行合并
+//就是对数组两半的元素进行遍历，比较大小，更小的就放入新数组，两半数组本身是有序的，然后比较后得到的新数组就是有序的
 void Merge(int SR[],int TR[],int i,int m,int n){//将数组SR[i...m]和SR[m+1...n]合并排序后放入数组TR
     int j,k,l;
     for(j=m+1,k=i;i<=m&&j<=n;k++){//i是左半数组的下标，j是右半数组的下标，k是数组TR的下标
@@ -191,6 +193,39 @@ void Merge(int SR[],int TR[],int i,int m,int n){//将数组SR[i...m]和SR[m+1...
     if(j<=n){
         for(l=0;l<=n-j;l++){
             TR[k+l]=SR[j+l];//j还剩就继续添加直到n
+        }
+    }
+}
+
+//归并排序的高阶版本，不调用递归
+//不需要调用递归进行拆半归并，也不需要每次都开数组记录拆半的数据，而是只多开一个数组，和原数组一起反复进行归并
+//在不递归的情况下利用子序列的长度来进行归并，这样也不用把数组不断拆半成最小单元了，而是根据序列长度，直接两两归并
+//然后再把更大的序列两两归并，两个数组反复将数据归并排序进另一个数组里
+//哪怕放入新数组的时候已经排好序了，最后再归并一次，也会把数据直接复制回原数组
+void MergeSort2(SqList *L){
+    int* TR=(int*)malloc(L->length*sizeof(int));//申请额外空间，用于和原数组互相排序合并记录
+    int k=1;
+    while(k<L->length){//k表示子序列的长度
+        MergePass(L->r,TR,k,L->length);//将子序列合并进新数组记录
+        k=2*k;//子序列长度翻倍
+        MergePass(TR,L->r,k,L->length);//将新数组的子序列合并回原数组，哪怕到最后不合并，也会把新数组的数据复制回原数组
+        k=2*k;//子序列长度翻倍
+    }
+}
+
+//将原数组的子序列合并进新数组
+void MergePass(int SR[],int TR[],int s,int n){//将SR中相邻长度为s的子序列归并进TR里，n为SR长度
+    int i=1;
+    int j;
+    while(i<=n-2*s+1){//i后面至少还要有两个s长度的空间才进行子序列两两归并
+        Merge(SR,TR,i,i+s-1,i+2*s-1);//把长度为s的两个子序列两两归并
+        i=i+2*s;//i增加两个s长度，进行下一组子序列归并
+    }
+    if(i<n-s+1){//i到s之间大于s，说明还可以构成两个子序列，哪怕最后一个子序列长度没有s
+        Merge(SR,TR,i,i+s-1,n);//归并最后两个子序列
+    }else{//若剩余长度不满s，只剩一个子序列
+        for(j=i;j<=n;j++){
+            TR[j]=SR[j];//把子序列平移进新数组
         }
     }
 }
