@@ -247,6 +247,8 @@ void QSort(SqList *L,int low,int high){
 }
 
 //找到L->r[low,high]的枢轴值，并把数据初步排序，小的放枢轴值左边，大的放枢轴值右边
+//直接选取第一个元素作为枢轴值，之后从两端遍历数组，左边有大的值或者右边有小的值就交换
+//两端的指针不断靠近，最终当两个指针重合，指向枢轴值，此时左边都是比枢轴值小的数据，右边都是比枢轴值大的数据
 int Partition(SqList *L,int low,int high){
     int pivotkey;
     pivotkey=L->r[low];//取第一个元素为枢轴值
@@ -261,4 +263,67 @@ int Partition(SqList *L,int low,int high){
         swap(L,low,high);//交换，把大的元素换到枢轴值右边
     }
     return low;//最终low等于high，都指向枢轴值
+}
+
+//快速排序优化算法
+int Partition1(SqList *L,int low,int high){
+    int pivotkey;
+    
+    //对pivotkey选取的优化，取首尾和中间三个数据，进行比较，选取中间值作为枢轴值，这样选取的枢轴值会更靠近中间值一点，提高效率
+    int m=low+(high-low)/2;//中间下标
+    if(L->r[low]>L->r[high]){
+        swap(L,low,high);
+    }//确保high>low
+    if(L->r[m]>L->r[high]){
+        swap(L,high,m);
+    }//确保high>m
+    if(L->r[m]>L->r[low]){
+        swap(L,m,low);
+    }//确保low>m
+    //这样，此时low下标的值就是这三个数据的中值了
+    
+    //交换的优化，不让枢轴值参与交换，数据之间只是赋值，这样一轮下来只交换一次，减少交换的次数
+    pivotkey=L->r[low];
+    L->r[0]=pivotkey;//标兵，先将枢轴值暂存起来
+    while(low<high){
+        while(low<high&&L->r[high]<pivotkey){
+            high--;
+        }
+        L->r[low]=L->r[high];//只是赋值
+        while(low<high&&L->r[low]>pivotkey){
+            low++;
+        }
+        L->r[high]=L->r[low];//赋值
+    }
+    L->r[low]=L->r[0];//low和high重合时，当前下标的值其实已经被交换过了，是重复数据，把这个下标作为枢轴值的下标
+    return low;
+}
+
+//处理小数组的优化
+//因为快速排序利用递归，当数据比较小的时候，浪费很多空间，大炮打蚊子，所以当数组长度小于一定值时，直接用插入排序，插入排序是简单排序里效率最高的
+#define MAXQSORT 7//数组的最小长度
+void QSort1(SqList *L,int low,int high){
+    int pivot;
+    if((high-low)>MAXQSORT){//如果大于最小长度就进行快速排序
+        pivot=Partition1(L,low,high);
+        QSort1(L,low,pivot-1);
+        QSort1(L,pivot+1,high);
+    }else{//如果数组长度小直接用插入排序
+        InsertSort(L);
+    }
+}
+
+//递归的优化，减少递归次数
+//每次只对左半区调用递归，利用Partition1函数对右半区来排序，不断划分左半区，对左半区递归，最终达到有序，这样递归次数就减少了
+void QSort2(SqList *L,int low,int high){
+    int pivot;
+    if((high-low)>MAXQSORT){
+        while(low<high){//进行循环
+            pivot=Partition1(L,low,high);//选取枢轴值，进行排序
+            QSort2(L,low,pivot-1);//对左半区进行递归
+            low=pivot+1;//尾递归，赋值给low，当下次循环的时候，Partition1(L,low,high)其实就是对右半区进行排序了
+        }
+    }else{
+        InsertSort(L);
+    }
 }
