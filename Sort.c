@@ -231,31 +231,34 @@ void MergePass(int SR[],int TR[],int s,int n){//将SR中相邻长度为s的子�
 }
 
 //快速排序
+//每次都将数组一分为二，找到枢轴值，让数组基本有序，再不断细分，直到最小单元，最终数组都有序
 void QuickSort(SqList *L){
     QSort(L,1,L->length);
 }
 
+//对L->r[low,high]进行快速排序
 void QSort(SqList *L,int low,int high){
-    int pivot;
+    int pivot;//枢轴值
     if(low<high){
-        pivot=Partition(L,low,high);
-        QSort(L,low,pivot-1);
-        QSort(L,pivot+1,high);
+        pivot=Partition(L,low,high);//利用函数计算数轴值，将数组一分为二，枢轴值位于中间，左边都比枢轴值小，右边都更大
+        QSort(L,low,pivot-1);//对较小半边进行快速排序
+        QSort(L,pivot+1,high);//对较大半边进行快速排序
     }
 }
 
+//找到L->r[low,high]的枢轴值，并把数据初步排序，小的放枢轴值左边，大的放枢轴值右边
 int Partition(SqList *L,int low,int high){
     int pivotkey;
-    pivotkey=L->r[low];
+    pivotkey=L->r[low];//取第一个元素为枢轴值
     while(low<high){
         while(low<high&&L->r[high]>=pivotkey){
-            high--;
+            high--;//大的元素才减，high会停在比枢轴值小的元素那
         }
-        swap(L,low,high);
+        swap(L,low,high);//交换，把小元素换到枢轴值左边
         while(low<high&&L->r[low]<=pivotkey){
-            low++;
+            low++;//小的元素才加，low会停在比枢轴值大的元素那
         }
-        swap(L,low,high);
+        swap(L,low,high);//交换，把大的元素换到枢轴值右边
     }
-    return low;
+    return low;//最终low等于high，都指向枢轴值
 }
