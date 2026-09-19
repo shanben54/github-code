@@ -9,7 +9,7 @@ public:
     bool containsNearbyDuplicate(vector<int>& nums, int k) {
         unordered_map<int,int>last;//记录数据最近出现的下标
         for(int i=0;i<nums.size();i++){//遍历数组
-            if(last.count(nums[i])&&i-last[i]<=k){//count用于判断这个值之前是否出现过
+            if(last.count(nums[i])&&i-last[nums[i]]<=k){//count用于判断这个值之前是否出现过
                 return true;
             }
             last[nums[i]]=i;//哪怕不符合要求也更新这个值最近下标
