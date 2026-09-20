@@ -22,7 +22,7 @@ Status GetElem(SqList L,int i,ElemType *e){
 Status ListInsert(SqList *L,int i,ElemType e){
     int k;
     if(L->length==maxsize) return error;//如果线性表长度已经最大了就不能添加
-    if(i<1||i>L->length+1) return error;//如果i的值不合规也添加不了，这里之所以是length+1,是英文如果i=length+1,说明直接在末尾加入
+    if(i<1||i>L->length+1) return error;//如果i的值不合规也添加不了，这里之所以是length+1,是因为如果i=length+1,说明直接在末尾加入
     if(i<=L->length){
         //把第i个元素之后（包括第i个元素）的元素都向后传递一位
         for(k=L->length-1;k>=i-1;k--){
