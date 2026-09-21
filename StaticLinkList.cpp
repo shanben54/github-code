@@ -3,15 +3,14 @@
 #include<cstdlib>
 using namespace std;
 
-typedef int ElemType;
 const int MAXSIZE=100;
-
+template<typename T>
 class StaticLinkList{
 private:
     
     //结点数据定义
     struct Component{
-        ElemType data;
+        T data;
         int cur;//后继
     };
 
@@ -53,7 +52,7 @@ public:
     }
     
     //获取第i个元素的值
-    bool GetElem(int i,ElemType &e)const{
+    bool GetElem(int i,T &e)const{
         if(i<1||i>length) return false;
         int k=MAXSIZE-1;//数据链表的头结点
         for(int j=1;j<=i;j++){
@@ -65,7 +64,7 @@ public:
     }
     
     //在第i个位置添加结点
-    bool ListInsert(int i,ElemType e){
+    bool ListInsert(int i,const T &e){
         if(i<1||i>length+1) return false;
         int j=Malloc_S();//申请空闲结点
         if(j==0) return false;//说明没有空闲结点了
@@ -83,7 +82,7 @@ public:
     }
     
     //删除第i个结点
-    bool ListDelete(int i,ElemType &e){
+    bool ListDelete(int i,T &e){
         if(i<1||i>length) return false;
         int k=MAXSIZE-1;
         for(int l=1;l<=i-1;l++){
@@ -108,7 +107,7 @@ public:
 };
 
 int main(){
-    StaticLinkList L;
+    StaticLinkList<int> L;
 
     for(int v=10;v<=50;v+=10){
         L.ListInsert(L.GetLength()+1,v);   // 尾插
@@ -118,7 +117,7 @@ int main(){
     L.ListInsert(2,15);
     L.PrintList();
 
-    ElemType e;
+    int e;
     if(L.GetElem(3,e)) cout<<"第 3 个元素: "<<e<<endl;
 
     if(L.ListDelete(1,e)) cout<<"删掉第 1 个: "<<e<<endl;
