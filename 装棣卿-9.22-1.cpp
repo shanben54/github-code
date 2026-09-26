@@ -1,3 +1,4 @@
+//力扣413，求等差数列子数组的个数，也就是至少连续三个元素，差值相同的子数组
 #include<bits/stdc++.h>
 using namespace std;
 
