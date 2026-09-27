@@ -1,9 +1,10 @@
 //顺序表的cpp写法
 #include<iostream>
 #include<cstdlib>
+#include<string>
 using namespace std;
 
-typedef int Elemtype;
+typedef string Elemtype;
 const int MAXSIZE=100;
 
 class SqList{
@@ -60,18 +61,13 @@ public:
 
 int main() {
     SqList L;
-    for (int v = 10; v <= 50; v += 10) {
-       L.ListInsert(L.GetLength() + 1, v); 
-    }
-
-      Elemtype e;
-      L.GetElem(3, e);
-      cout << "第 3 个：" << e << endl;
-
-      L.ListDelete(1, e);
-      cout << "删掉：" << e << endl;
-
-      cout << "表长：" << L.GetLength() << endl;
-      system("pause");
-      return 0;
+    L.ListInsert(1,"2025年羽毛球");
+    L.ListInsert(2,"世锦赛冠军是");
+    L.ListInsert(3,"石宇奇！");
+    cout<<L.GetLength()<<endl;
+    string s;
+    L.GetElem(3,s);
+    cout<<s<<endl;
+    system("pause");
+    return 0;
   }
