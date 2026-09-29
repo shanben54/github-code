@@ -29,9 +29,9 @@ void PreOrderTraverse(BiTree T){//传入的T是根结点的地址
 //中序遍历
 void InOrderTraverse(BiTree T){
     if(T==NULL) return;//树空就返回
-    PreOrderTraverse(T->lchild);//先遍历左子树
+    InOrderTraverse(T->lchild);//先遍历左子树
     printf("%c",T->data);//再打印结点
-    PreOrderTraverse(T->rchild);//最后遍历右子树
+    InOrderTraverse(T->rchild);//最后遍历右子树
 }
 
 //后序遍历
