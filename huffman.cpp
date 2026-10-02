@@ -1,27 +1,49 @@
 #include<iostream>
 #include<cstdlib>
+#include<string>
 #include<queue>
-#include<vector>
-#include<functional>
 using namespace std;
 
-int main(){
-    int w[]={1,2,3,4,5};
-    priority_queue<int,vector<int>,greater<int>>q;
-    for(int x:w){
-        q.push(x);
+struct TreeNode{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int v):val(v),left(nullptr),right(nullptr){}
+    TreeNode(int v,TreeNode* l,TreeNode* r):val(v),left(l),right(r){}
+};
+
+auto cmp=[](TreeNode* a,TreeNode* b){
+    return a->val>b->val;
+};
+
+priority_queue<TreeNode*,vector<TreeNode*>,decltype(cmp)> q(cmp);
+
+void GetCode(TreeNode* t,string code){
+    if(t->left==nullptr&&t->right==nullptr){
+        cout<<t->val<<":"<<code<<endl;
+        return ;
+    }else{
+        GetCode(t->left,code+"0");
+        GetCode(t->right,code+"1");
     }
-    int wpl=0;
+}
+
+int main(){
+    int w[]{1,2,3,4,5};
+    for(int a:w){
+        TreeNode* p=new TreeNode(a);
+        q.push(p);
+    }
     while(q.size()>1){
-        int a=q.top();
+        TreeNode* a=q.top();
         q.pop();
-        int b=q.top();
+        TreeNode* b=q.top();
         q.pop();
-        int c=a+b;
-        wpl+=c;
+        TreeNode* c=new TreeNode(a->val+b->val,a,b);
         q.push(c);
     }
-    cout<<"WPL= "<<wpl<<endl;
+    TreeNode* root=q.top();
+    GetCode(root,"");
     system("pause");
     return 0;
 }
