@@ -14,17 +14,18 @@ class Solution {
 private:
     int ans=0;
 public:
-    int diameterOfBinaryTree(TreeNode* root) {
-        ans=0;
-        int d=deepth(root);
+    int maxPathSum(TreeNode* root) {
+        if(root==nullptr) return 0;
+        ans=root->val;
+        helper(root);
         return ans;
     }
 
-    int deepth(TreeNode* r){
+    int helper(TreeNode* r){
         if(r==nullptr) return 0;
-        int L=deepth(r->left);
-        int R=deepth(r->right);
-        ans=max(ans,L+R);
-        return 1+max(L,R);
+        int L=helper(r->left);
+        int R=helper(r->right);
+        ans=max(ans,max(0,R)+max(0,L)+r->val);
+        return r->val+max(max(L,0),max(R,0));
     }
 };
