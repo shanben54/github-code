@@ -1,0 +1,18 @@
+# 编译产物
+*.exe
+*.obj
+*.o
+*.out
+*.dll
+*.so
+
+# Python
+__pycache__/
+*.pyc
+
+# 压缩包 / 临时文件
+*.zip
+*.tmp
+
+# 编辑器配置
+.vscode/
