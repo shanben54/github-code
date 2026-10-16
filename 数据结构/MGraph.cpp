@@ -1,6 +1,7 @@
 //邻接矩阵的cpp复现
 #include<iostream>
 #include<cstdlib>
+#include"SqQueue.h"
 using namespace std;
 
 template<typename VertexType,typename EdgeType>
@@ -11,6 +12,8 @@ private:
     VertexType* vexs;//顶点集
     EdgeType** arc;//边集
     EdgeType NoEdge;//边不存在时的值
+    int* visited;
+    void DFS(int i);
 public:
     MGraph(int num,EdgeType NoEdgevalue);
     ~MGraph();
@@ -18,6 +21,8 @@ public:
     void SetVertex(int i,VertexType v);
     void AddEdge(int i,int j,EdgeType w);
     void Display()const;
+    void DFSTraverse();
+    void BFSTraverse();
 };
 
 //构造函数
@@ -27,6 +32,7 @@ MGraph<VertexType,EdgeType>::MGraph(int num,EdgeType NoEdgevalue){
     NoEdge=NoEdgevalue;
     VertexNum=num;
     vexs=new VertexType[VertexNum];//开辟顶点集
+    visited=new int[VertexNum];
     arc=new EdgeType*[VertexNum];
     for(int i=0;i<VertexNum;i++){
         arc[i]=new EdgeType[VertexNum];
@@ -51,6 +57,7 @@ MGraph<VertexType,EdgeType>::~MGraph(){
         delete[] arc[i];
     }
     delete[] arc;
+    delete[] visited;
 }
 
 //设置顶点数据
@@ -84,6 +91,57 @@ void MGraph<VertexType,EdgeType>::Display()const{
     }
 }
 
+//深度优先遍历的递归
+template<typename VertexType,typename EdgeType>
+void MGraph<VertexType,EdgeType>::DFS(int i){
+    if(visited[i]==0){
+        visited[i]=1;
+        cout<<vexs[i]<<" ";
+        for(int j=0;j<VertexNum;j++){
+            if(arc[i][j]!=NoEdge){
+                DFS(j);
+            }
+        }
+    }
+}
+
+//深度优先遍历
+template<typename VertexType,typename EdgeType>
+void MGraph<VertexType,EdgeType>::DFSTraverse(){
+    for(int i=0;i<VertexNum;i++){
+        visited[i]=0;
+    }
+    for(int i=0;i<VertexNum;i++){
+        DFS(i);
+    }
+}
+
+//广度优先遍历
+template<typename VertexType,typename EdgeType>
+void MGraph<VertexType,EdgeType>::BFSTraverse(){
+    for(int i=0;i<VertexNum;i++){
+        visited[i]=0;
+    }
+    SqQueue<int> q;
+    for(int k=0;k<VertexNum;k++){
+        if(visited[k]==0){
+            visited[k]=1;
+            q.EnQueue(k);
+            while(!q.Empty()){
+                int i;
+                q.DeQueue(i);
+                cout<<vexs[i]<<" ";
+                for(int j=0;j<VertexNum;j++){
+                    if(arc[i][j]!=NoEdge&&visited[j]==0){
+                        visited[j]=1;
+                        q.EnQueue(j);
+                    }
+                }
+            }
+        }
+    }
+}
+
 int main(){
     MGraph<char, int> g(4, 999);   // 4 个顶点，999 表示"无边"
     g.SetVertex(1, 'A');
@@ -96,6 +154,9 @@ int main(){
     g.AddEdge(3, 4, 4);
     g.AddEdge(1, 2, 5);            // 故意重复加 A-B
     g.Display();
+    g.DFSTraverse();
+    cout<<endl;
+    g.BFSTraverse();
     system("pause");
     return 0;
   }
