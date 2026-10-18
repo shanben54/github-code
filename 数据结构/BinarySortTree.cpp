@@ -21,6 +21,7 @@ private:
     void Destroy(Node *t);
     bool Erase(Node* &t,const T &key);
     void EraseNode(Node* &t);
+    void EraseMax(Node* &r);
 public:
     BST(){root=nullptr;}
     ~BST(){Destroy(root);}
@@ -114,16 +115,28 @@ bool BST<T>::Erase(Node* &t,const T &key){
 template<typename T>
 void BST<T>::EraseNode(Node* &t){
     if(t->left&&t->right){//两颗子树都非空，先找到中序遍历的前驱，用这个值取代当前结点的值，再对前驱结点进行删除
-        Node*& s=t->left;//注意是引用，直接引用树里面的结点来操作
-        while(s->right){
-            s=s->right;
+        Node* p=t->left;
+        while(p->right){
+            p=p->right;
         }
-        t->val=s->val;
-        EraseNode(s);
+        t->val=p->val;
+        EraseMax(t->left);//不能直接把p传进来，这样虽然删除了结点，但是子树接在p身上了，子树就从BST上断出去了
     }else{//只有一颗或者没有子树，直接把子树接上替代自己
         Node* s=t;
         t=t->left?t->left:t->right;
         delete s;
+    }
+}
+
+//递归删除前驱结点
+//因为引用不能改变，所以只能用递归的方式来不断往下找到前驱结点，最后来执行删除
+template<typename T>
+void BST<T>::EraseMax(Node* &r){
+    if(r->right) EraseMax(r->right);
+    else{
+        Node* p=r;
+        r=r->left?r->left:r->right;
+        delete p;
     }
 }
 
@@ -142,6 +155,9 @@ int main(){
     cout << "\nsearch 4:  " << t.Search(4)  << endl;   // 1
     cout << "search 10: "   << t.Search(10) << endl;   // 0
     cout << "insert 5:  "   << t.Insert(5)  << endl;   // 0(重复,不插入)
+    t.Erase(3);  t.InOrder(); cout<<endl;  // 期望: 1 2 4 5 6 7 8 9   （双子结点）
+    t.Erase(5);  t.InOrder(); cout<<endl;  // 期望: 1 2 4 6 7 8 9     （删根）
+    t.Erase(1);  t.InOrder();   // 期望: 2 4 6 7 8 9       （叶子）
     system("pause");
     return 0;
 }
