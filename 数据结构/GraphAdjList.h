@@ -48,12 +48,15 @@ public:
 
     void SetVex(int i,VertexType d);
     void AddEdge(int i,int j,EdgeType w);
+    void AddArc(int i,int j,EdgeType w);  
     void Display()const;
     void DFSTraver();
     void BFSTraver();
     void Dijkstra(int scr,EdgeType dist[],int path[]);
     void Prim(EdgeType lowcost[],int adjvex[]);
     void Kruskal();
+    bool Toposort(int order[]);
+    EdgeType CriticalPath();
 };
 
 //构造函数
@@ -89,7 +92,7 @@ void GraphAdjList<VertexType,EdgeType>::SetVex(int i,VertexType d){
     vexs[i].data=d;
 }
 
-//新建边
+//新建边,无向图的建边
 template<typename VertexType,typename EdgeType>
 void GraphAdjList<VertexType,EdgeType>::AddEdge(int i,int j,EdgeType w){
     if(j==i) return;
@@ -108,6 +111,21 @@ void GraphAdjList<VertexType,EdgeType>::AddEdge(int i,int j,EdgeType w){
         if(a){
             a->weight=w;
         }
+    }
+}
+
+//有向图的建边，只建一条边
+template<typename VertexType,typename EdgeType>
+void GraphAdjList<VertexType,EdgeType>::AddArc(int i,int j,EdgeType w){
+    if(i==j) return ;
+    EdgeNode* a=Find(i,j);
+    if(a==nullptr){
+        EdgeNode* q=new EdgeNode(j,w);
+        q->next=vexs[i].first;
+        vexs[i].first=q;
+        EdgeNum++;
+    }else{
+        a->weight=w;
     }
 }
 
@@ -306,6 +324,99 @@ void GraphAdjList<VertexType,EdgeType>::Kruskal(){
     }else{
         cout<<"总权重为"<<ans<<endl;
     }
+}
+
+//拓扑排序
+//获取所有结点的入度，将入度为0的结点入队，依次取出使其相邻的结点入度减1，继续将入度为0的结点入队，直到遍历所有结点
+template<typename VertexType,typename EdgeType>
+bool GraphAdjList<VertexType,EdgeType>::Toposort(int order[]){
+    int *indegree=new int[VertexNum];
+    for(int i=0;i<VertexNum;i++){
+        indegree[i]=0;
+    }
+    for(int i=0;i<VertexNum;i++){
+        EdgeNode* p=vexs[i].first;
+        while(p){
+            indegree[p->adjvex]++;
+            p=p->next;
+        }
+    }
+    SqQueue<int> q;
+    for(int i=0;i<VertexNum;i++){
+        if(indegree[i]==0){
+            q.EnQueue(i);
+        }
+    }
+    int cnt=0;
+    while(!q.Empty()){
+        int m;
+        q.DeQueue(m);
+        cout<<vexs[m].data<<" ";
+        order[cnt++]=vexs[m].data;
+        EdgeNode* p=vexs[m].first;
+        while(p){
+            indegree[p->adjvex]--;
+            if(indegree[p->adjvex]==0){
+                q.EnQueue(p->adjvex);
+            }
+            p=p->next;
+        }
+    }
+    delete[] indegree;
+    return cnt==VertexNum;//判断是否有环
+}
+
+//求AOE图的关键路径
+template<typename VertexType,typename EdgeType>
+EdgeType GraphAdjList<VertexType,EdgeType>::CriticalPath(){
+    int* order=new int[VertexNum];
+    //先将结点进行拓扑排序
+    if(!Toposort(order)){
+        cout<<"存在环";
+        delete[] order;
+        return 0;
+    }
+    //事件最早发生的时间
+    EdgeType* ve=new EdgeType[VertexNum];
+    for(int i=0;i<VertexNum;i++){
+        ve[i]=0;
+    }
+    for(int i=0;i<VertexNum;i++){
+        EdgeNode* p=vexs[order[i]].first;
+        while(p){
+            ve[p->adjvex]=max(ve[p->adjvex],ve[order[i]]+p->weight);//前驱全部完成后才能开始，取最大值
+            p=p->next;
+        }
+    }
+    //事件最晚发生的时间
+    EdgeType* vl=new EdgeType[VertexNum];
+    for(int i=0;i<VertexNum;i++){
+        vl[i]=ve[order[VertexNum-1]];
+    }
+    for(int i=VertexNum-1;i>=0;i--){
+        EdgeNode* p=vexs[order[i]].first;
+        while(p){
+            vl[order[i]]=min(vl[order[i]],vl[p->adjvex]-p->weight);//后继减去活动就是最晚开始时间，取最小值
+            p=p->next;
+        }
+    }
+    //寻找关键路径，注意关键路径是活动也就是边，而前面记录的是事件也就是结点
+    for(int i=0;i<VertexNum;i++){
+        EdgeNode* p=vexs[order[i]].first;
+        while(p){
+            EdgeType e=ve[order[i]];
+            EdgeType l=vl[p->adjvex]-p->weight;
+            if(e==l){
+                cout<<order[i]<<"->"<<p->adjvex<<":"<<p->weight<<endl;
+            }
+            p=p->next;
+        }
+    }
+    EdgeType a=ve[order[VertexNum-1]];//返回总权值
+    delete[] order;
+    delete[] ve;
+    delete[] vl;
+    return a;
 }
 
 #endif
