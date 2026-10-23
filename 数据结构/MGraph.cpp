@@ -14,6 +14,15 @@ private:
     EdgeType NoEdge;//边不存在时的值
     int* visited;
     void DFS(int i);
+    //辅助Floyd算法打印路径的函数
+    void Path(int i,int j,int** p){
+        if(p[i][j]==-1){
+            cout<<vexs[i]<<"->";
+        }else{
+            Path(i,p[i][j],p);
+            Path(p[i][j],j,p);
+        }
+    }
 public:
     MGraph(int num,EdgeType NoEdgevalue);
     ~MGraph();
@@ -23,6 +32,7 @@ public:
     void Display()const;
     void DFSTraverse();
     void BFSTraverse();
+    void Floyd();
 };
 
 //构造函数
@@ -142,6 +152,52 @@ void MGraph<VertexType,EdgeType>::BFSTraverse(){
     }
 }
 
+//Floyd算法求最短路径
+//动态规划的思想，初始结点之间的最短距离就是边，然后依次选取结点作为中转站，看看加入中转站后两个结点之间距离是否变短，变短就更新
+//在中间时刻的路径不一定是最短的，但是经过所以结点作为中转后的路径是最短的，每个结点都参与其中，最后的结果就是最短的
+template<typename VertexType,typename EdgeType>
+void MGraph<VertexType,EdgeType>::Floyd(){
+    EdgeType** dist=new EdgeType*[VertexNum];
+    int** path=new int*[VertexNum];//记录i到j之间最后一个结点，就是j之前的结点
+    for(int i=0;i<VertexNum;i++){
+        dist[i]=new EdgeType[VertexNum];
+        path[i]=new int[VertexNum];
+    }
+    for(int i=0;i<VertexNum;i++){
+        for(int j=0;j<VertexNum;j++){
+            dist[i][j]=arc[i][j];
+            path[i][j]=-1;
+        }
+    }
+    for(int k=0;k<VertexNum;k++){
+        for(int i=0;i<VertexNum;i++){
+            for(int j=0;j<VertexNum;j++){
+                if(dist[k][j]!=NoEdge&&dist[i][k]!=NoEdge&&dist[i][j]<dist[i][k]+dist[k][j]){
+                    dist[i][j]=dist[i][k]+dist[k][j];
+                    path[i][j]=k;
+                }
+            }
+        }
+    }
+    //打印路径
+    for(int i=0;i<VertexNum;i++){
+        for(int j=0;j<VertexNum;j++){
+            if(i!=j&&dist[i][j]!=NoEdge){
+                cout<<vexs[i]<<"->"<<vexs[j]<<":"<<dist[i][j];
+                cout<<"路径为:"<<" ";
+                Path(i,j,path);
+                cout<<vexs[j]<<endl;
+            }
+        }
+    }
+    for(int i=0;i<VertexNum;i++){
+        delete[] dist[i];
+        delete[] path[i];
+    }
+    delete[] dist;
+    delete[] path;
+}
+
 int main(){
     MGraph<char, int> g(4, 999);   // 4 个顶点，999 表示"无边"
     g.SetVertex(1, 'A');
@@ -157,6 +213,7 @@ int main(){
     g.DFSTraverse();
     cout<<endl;
     g.BFSTraverse();
+    g.Floyd();
     system("pause");
     return 0;
   }
