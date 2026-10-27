@@ -1,4 +1,5 @@
 //哈希表(散列表)的cpp复现
+//链式哈希表，把哈希值相同的结点串成链表，没有冲突的问题，直接在对应哈希值的链表里查找元素
 #include<iostream>
 #include<string>
 #include<vector>
