@@ -100,6 +100,90 @@ long long CountQSort3(vector<int> a){
     return c;
 }
 
+//堆排序
+//下沉函数，如果孩子大于temp，就把孩子换上来，i继续下沉，直到孩子都不大于temp
+template<typename T,typename Cmp>
+void SiftDown(T arr[],int i,int n,Cmp less){
+    T temp=arr[i];
+    for(int child=2*i+1;child<n;child=i*2+1){
+        if(child+1<n&&less(arr[child],arr[child+1])) child+=1;//哪边孩子更大就用哪边的
+        if(!less(temp,arr[child])) break;//如果孩子不大于temp就返回，当数组里的数据全相等的时候大有用，比较一次就直接退出
+        arr[i]=arr[child];//把孩子换上来
+        i=child;//i继续下沉,此时i的位置是空位
+    }
+    arr[i]=temp;//最终把temp填回挖的坑去
+}
+
+//堆排序函数，大顶堆，升序
+//通过大顶堆找到当前数组里最大的值，然后放到数组末尾，继续维护堆，直到排序完成
+template<typename T,typename Cmp>
+void HeapSort(T arr[],int n,Cmp less){
+    //从最后一个非叶结点(n/2-1)开始建立堆，逆向建堆，是为了保证当i建堆的时候，他的孩子已经是堆了
+    //如果不是这样，孩子不是堆，子树里的最大值就可能被埋在底下而无法移到最上面
+    for(int i=n/2-1;i>=0;i--){
+        SiftDown(arr,i,n,less);
+    }
+    //每次都将当前堆的最大值移动到数组末尾，重新维护堆
+    for(int i=n-1;i>0;i--){
+        swap(arr[0],arr[i]);
+        SiftDown(arr,0,i,less);
+    }
+}
+
+long long CountHeapSort(vector<int> a){
+    long long c=0;
+    HeapSort(a.data(),(int)a.size(),[&c](int x,int y){c++;return x<y;});
+    return c;
+}
+
+//归并排序
+//归并函数，将已分别排序好的两段数组进行排序
+template<typename T,typename Cmp>
+void Merge(T arr[],int low,int mid,int high,T temp[],Cmp less){
+    int i=low;
+    int j=mid+1;
+    int k=low;
+    //因为两段数组都已经分别有序了，依次取元素出来比较，较小的就放进temp数组
+    while(i<=mid&&j<=high){
+        if(less(arr[j],arr[i])){
+            temp[k++]=arr[j++];
+        }else{//小于或者相等的时候，这样可以保证相等的时候顺序不变，更加稳定
+            temp[k++]=arr[i++];
+        }
+    }
+    //处理剩下的元素
+    while(i<=mid) temp[k++]=arr[i++];
+    while(j<=high) temp[k++]=arr[j++];
+    //将元素移回原数组
+    for(i=low;i<=high;i++){
+        arr[i]=temp[i];
+    }
+}
+
+//分割的函数，将数组不断递归直至最小(自己就有序，只有一个元素)，然后再调用归并函数进行合并
+template<typename T,typename Cmp>
+void MSort(T arr[],int low,int high,T temp[],Cmp less){
+    if(low>=high) return ;
+    int mid=low+(high-low)/2;//将区间分为两半
+    MSort(arr,low,mid,temp,less);
+    MSort(arr,mid+1,high,temp,less);
+    Merge(arr,low,mid,high,temp,less);
+}
+
+//归并排序函数
+template<typename T,typename Cmp>
+void MergeSort(T arr[],int n,Cmp less){
+    T* temp=new T[n];//开辟一个数组用于临时储存数据
+    MSort(arr,0,n-1,temp,less);
+    delete[] temp;
+}
+
+long long CountMergeSort(vector<int> a){
+    long long c=0;
+    MergeSort(a.data(),a.size(),[&c](int x,int y){c++;return x<y;});
+    return c;
+}
+
 int main(){
     srand(time(0));
     int n=1000;
@@ -118,6 +202,14 @@ int main(){
     cout<<"三路-随机:"<<CountQSort3(rnd)<<endl;
     cout<<"三路-有序:"<<CountQSort3(arc)<<endl;
     cout<<"三路-相同:"<<CountQSort3(sam)<<endl;
+    
+    cout<<"堆排序-随机:"<<CountHeapSort(rnd)<<endl;
+    cout<<"堆排序-有序:"<<CountHeapSort(arc)<<endl;
+    cout<<"堆排序-相同:"<<CountHeapSort(sam)<<endl;
+
+    cout<<"归并排序-随机:"<<CountMergeSort(rnd)<<endl;
+    cout<<"归并排序-有序："<<CountMergeSort(arc)<<endl;
+    cout<<"归并排序-相同:"<<CountMergeSort(sam)<<endl;
 
     return 0;
 }
