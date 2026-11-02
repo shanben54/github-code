@@ -4,12 +4,12 @@
 #include<string>
 using namespace std;
 
-typedef string Elemtype;
 const int MAXSIZE=100;
 
+template<typename T>
 class SqList{
 private:
-  Elemtype data[MAXSIZE];//顺序表数组
+  T data[MAXSIZE];//顺序表数组
   int length;//顺序表长度
 public:
   //构造函数,初始化长度为0
@@ -21,14 +21,14 @@ public:
   }
   
   //获取第i个元素的值
-  bool GetElem(int i,Elemtype &e)const{//要修改e的值，所以e前面加&引用
+  bool GetElem(int i,T &e)const{//要修改e的值，所以e前面加&引用
     if(i<1||i>length) return false;
     e=data[i-1];//注意下标
     return true;
   }
   
   //在第i个位置插入数据e
-  bool ListInsert(int i,Elemtype e){
+  bool ListInsert(int i,T e){
     if(length==MAXSIZE) return false;
     if(i<1||i>length+1) return false;
     
@@ -44,7 +44,7 @@ public:
   }
   
   //删除第i个位置的元素
-  bool ListDelete(int i,Elemtype &e){
+  bool ListDelete(int i,T &e){
     if(length==0) return false;
     if(i<1||i>length) return false;
     
@@ -60,7 +60,7 @@ public:
 };
 
 int main() {
-    SqList L;
+    SqList<string> L;
     L.ListInsert(1,"2025年羽毛球");
     L.ListInsert(2,"世锦赛冠军是");
     L.ListInsert(3,"石宇奇！");

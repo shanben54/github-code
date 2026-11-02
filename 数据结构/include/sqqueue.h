@@ -2,16 +2,11 @@
 #define SQQUEUE_H
 
 #include<iostream>
-#include<string>
-using namespace std;
-
-typedef int Status;
-const int ok=1;
-const int error=0;
-const int maxsize=1000;
 
 template<typename T>
 class SqQueue{
+public:
+    static constexpr int maxsize=1000;
 private:
     T s[maxsize];//储存数据的数组
     int front;//头指针，指向队列第一个元素
@@ -19,11 +14,11 @@ private:
     
 public:
     SqQueue();
-    Status Empty()const;
-    Status Full()const;
-    Status EnQueue(const T &e);
-    Status DeQueue(T &e);
-    Status GetFront(T &e)const;
+    bool Empty()const;
+    bool Full()const;
+    bool EnQueue(const T &e);
+    bool DeQueue(T &e);
+    bool GetFront(T &e)const;
     int GetLength()const;
     void ClearQueue();
     void Print()const;
@@ -38,40 +33,40 @@ SqQueue<T>::SqQueue(){
 
 //判断队列是否为空，头尾指针相同为空
 template<typename T>
-Status SqQueue<T>::Empty()const{
-    return front==rear?ok:error;
+bool SqQueue<T>::Empty()const{
+    return front==rear?true:false;
 }
 
 //判断队列是否已满，如果尾指针下一位是头指针就为满，虽然浪费了一个尾指针的空间，但是可以和判空做区分
 template<typename T>
-Status SqQueue<T>::Full()const{
-    return (rear+1)%maxsize==front?ok:error;//取余，因为是在数组里循环
+bool SqQueue<T>::Full()const{
+    return (rear+1)%maxsize==front?true:false;//取余，因为是在数组里循环
 }
 
 //在队尾添加元素
 template<typename T>
-Status SqQueue<T>::EnQueue(const T &e){
-    if(Full()==ok) return error;
+bool SqQueue<T>::EnQueue(const T &e){
+    if(Full()==true) return false;
     s[rear]=e;
     rear=(rear+1)%maxsize;
-    return ok;
+    return true;
 }
 
 //取出队首元素
 template<typename T>
-Status SqQueue<T>::DeQueue(T &e){
-    if(Empty()==ok) return error;
+bool SqQueue<T>::DeQueue(T &e){
+    if(Empty()==true) return false;
     e=s[front];
     front=(front+1)%maxsize;
-    return ok;
+    return true;
 }
 
 //获取队首元素，不取出
 template<typename T>
-Status SqQueue<T>::GetFront(T &e)const{
-    if(Empty()==ok) return error;
+bool SqQueue<T>::GetFront(T &e)const{
+    if(Empty()==true) return false;
     e=s[front];
-    return ok;
+    return true;
 }
 
 //获取队列长度
@@ -91,14 +86,14 @@ void SqQueue<T>::ClearQueue(){
 // 注意不能用 i<rear 当条件，队尾可能已经绕回数组开头了
 template<typename T>
 void SqQueue<T>::Print()const{
-    if(Empty()==ok){
-        cout<<"空队列"<<endl;
+    if(Empty()==true){
+        std::cout<<"空队列"<<std::endl;
         return;
     }
     for(int i=front;i!=rear;i=(i+1)%maxsize){
-        cout<<s[i]<<" ";
+        std::cout<<s[i]<<" ";
     }
-    cout<<endl;
+    std::cout<<std::endl;
 }
 
 #endif

@@ -3,23 +3,19 @@
 #include<string>
 using namespace std;
 
-typedef int Status;
-const int maxsize=1000;
-const int error=0;
-const int ok=1;
-
 template<typename T>//模板
 class SqStack{
 private:
+    static constexpr int maxsize=1000;
     T data[maxsize];//储存栈的数据
     int top;//栈顶下标，栈空时为-1
 
 public:
     SqStack();
-    Status Push(const T &e);
-    Status Pop(T &e);
+    bool Push(const T &e);
+    bool Pop(T &e);
     bool Empty()const;
-    Status GetTop(T &e)const;
+    bool GetTop(T &e)const;
     int Length()const;
     void ClearStack();
     void Print()const;
@@ -33,20 +29,20 @@ SqStack<T>::SqStack(){
 
 //添加栈顶元素
 template<typename T>
-Status SqStack<T>::Push(const T &e){
-    if(top==maxsize-1) return error;
+bool SqStack<T>::Push(const T &e){
+    if(top==maxsize-1) return false;
     top++;
     data[top]=e;
-    return ok;
+    return true;
 }
 
 //取出栈顶元素
 template<typename T>
-Status SqStack<T>::Pop(T &e){
-    if(top==-1) return error;
+bool SqStack<T>::Pop(T &e){
+    if(top==-1) return false;
     e=data[top];
     top--;
-    return ok;
+    return true;
 }
 
 //判断栈是否为空
@@ -63,10 +59,10 @@ int SqStack<T>::Length()const{
 
 //获取栈顶元素，不取出
 template<typename T>
-Status SqStack<T>::GetTop(T &e)const{
-    if(top==-1) return error;
+bool SqStack<T>::GetTop(T &e)const{
+    if(top==-1) return false;
     e=data[top];
-    return ok;
+    return true;
 }
 
 //清理栈
@@ -115,7 +111,7 @@ int main(){
     Si.Print();  // 空栈
 
     // 空栈还去出栈，应该失败
-    if(Si.Pop(ei)==error){
+    if(Si.Pop(ei)==false){
         cout<<"空栈出栈失败，符合预期"<<endl;
     }
 

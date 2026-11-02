@@ -4,16 +4,15 @@
 #include<cstdlib>
 using namespace std;
 
-typedef int ElemType;
-
+template<typename T>
 class LinkList{
 private:
     //定义结点
     struct Node
     {
-        ElemType data;
+        T data;
         Node* next;
-        Node(ElemType v):data(v),next(nullptr){}//结点的构造函数，初始next为nullptr
+        Node(T v):data(v),next(nullptr){}//结点的构造函数，初始next为nullptr
     };
     Node* Head;//头结点，next指向第一个结点
 
@@ -39,7 +38,7 @@ public:
     }
     
     //获取第i个结点的数据
-    bool GetElem(int i,ElemType &e)const{
+    bool GetElem(int i,T &e)const{
         if(i<1) return false;//注意i不合理的判别，最开始就忘了写
         Node* p=Head->next;
         int j=1;
@@ -54,7 +53,7 @@ public:
     }
     
     //在第i个位置添加结点
-    bool LinkListInsert(int i,ElemType e){
+    bool LinkListInsert(int i,T e){
         if(i<1) return false;
         Node* p=Head;
         int j=1;
@@ -72,7 +71,7 @@ public:
     }
     
     //删除第i个结点
-    bool LinkListDelete(int i,ElemType &e){
+    bool LinkListDelete(int i,T &e){
         if(i<1) return false;
         Node* p=Head;
         int j=1;
@@ -131,10 +130,10 @@ public:
 
 // 遍历打印整条链
 // 类里没有暴露结点，所以只能靠公开接口 GetLength + GetElem 一个个取出来
-void PrintList(const LinkList &L){
+void PrintList(const LinkList<int> &L){
     cout<<"表长 "<<L.GetLength()<<": ";
     for(int i=1;i<=L.GetLength();i++){
-        ElemType e;
+        int e;
         L.GetElem(i,e);
         cout<<e<<" ";
     }
@@ -144,7 +143,7 @@ void PrintList(const LinkList &L){
 int main(){
     srand(time(0));   // 随机种子全程设一次就行
 
-    LinkList L;
+    LinkList<int> L;
 
     cout<<"=== 1. 尾插法建表 5 个 ==="<<endl;
     L.TailInsert(5);
@@ -161,7 +160,7 @@ int main(){
     PrintList(L);
 
     cout<<"=== 4. 取元素 ==="<<endl;
-    ElemType e;
+    int e;
     if(L.GetElem(3,e)) cout<<"第 3 个元素: "<<e<<endl;
     if(!L.GetElem(100,e)) cout<<"取第 100 个失败（越界）"<<endl;
 
