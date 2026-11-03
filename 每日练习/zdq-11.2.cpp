@@ -7,7 +7,7 @@ using namespace std;
 class Solution {
 public:
     //查找老大的函数
-    int Find(int x,vector<int> boss){
+    int Find(int x,vector<int> &boss){
         while(boss[x]!=x) x=boss[x];
         return x;
     }
