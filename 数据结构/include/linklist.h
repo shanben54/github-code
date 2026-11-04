@@ -1,6 +1,8 @@
 #ifndef LINKLIST_H
 #define LINKLIST_H
 
+#include<utility>
+
 template<typename T>
 class LinkList{
 private:
@@ -16,6 +18,24 @@ private:
 public:
     //构造函数，先构造一个头结点出来
     LinkList():Head(new Node(0)){}
+
+    LinkList(const LinkList& o){
+        Head=new Node(0);
+        Node* p=o.Head->next;
+        Node* q=Head;
+        while(p){
+            Node* n=new Node(p->data);
+            q->next=n;
+            q=n;
+            p=p->next;
+        }
+    }
+
+    LinkList& operator=(const LinkList& o){
+        LinkList tmp(o);
+        std::swap(Head,tmp.Head);
+        return *this;
+    }
     
     //析构函数，清理结点，删除头结点
     ~LinkList(){
