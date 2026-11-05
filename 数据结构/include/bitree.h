@@ -4,6 +4,7 @@
 #include<iostream>
 #include<queue>
 #include<stack>
+#include<utility>
 #include<string>
 
 template<typename T>
@@ -11,6 +12,7 @@ struct TreeNode{
     T data;//结点数据 
     TreeNode *leftchild;//左孩子
     TreeNode *rightchild;//右孩子
+    TreeNode():data(T()),leftchild(nullptr),rightchild(nullptr){}
 };
 
 template<typename T>
@@ -22,8 +24,11 @@ private:
     void PreOrder(TreeNode<T>* t)const;//前序遍历函数
     void InOrder(TreeNode<T>* t)const;//中序遍历函数
     void PostOrder(TreeNode<T>* t)const;//后序遍历函数
+    TreeNode<T>* Clone(TreeNode<T>* t)const;
 public:
     BiTree();
+    BiTree(const BiTree &o);
+    BiTree& operator=(const BiTree &o);
     ~BiTree();
     void Create(const std::string &s);
     void PreOrder()const;
@@ -37,6 +42,28 @@ public:
 template<typename T>
 BiTree<T>::BiTree(){
     root=nullptr;
+}
+
+template<typename T>
+TreeNode<T>* BiTree<T>::Clone(TreeNode<T>* t)const{
+    if(t==nullptr) return t;
+    TreeNode<T>* p= new TreeNode<T>;
+    p->data=t->data;
+    p->leftchild=Clone(t->leftchild);
+    p->rightchild=Clone(t->rightchild);
+    return p;
+}
+
+template<typename T>
+BiTree<T>::BiTree(const BiTree &o){
+    root=Clone(o.root);
+}
+
+template<typename T>
+BiTree<T>& BiTree<T>::operator=(const BiTree &o){
+    BiTree tmp(o);
+    std::swap(tmp.root,root);
+    return *this;
 }
 
 //析构函数
