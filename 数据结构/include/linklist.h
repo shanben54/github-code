@@ -11,7 +11,7 @@ private:
     {
         T data;
         Node* next;
-        Node(cosnt T &v):data(v),next(nullptr){}//结点的构造函数，初始next为nullptr，更新为引用传参，这样可以减少一次拷贝构造
+        Node(const T &v):data(v),next(nullptr){}//结点的构造函数，初始next为nullptr，更新为引用传参，这样可以减少一次拷贝构造
     };
     Node* Head;//头结点，next指向第一个结点
 

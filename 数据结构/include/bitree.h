@@ -44,6 +44,7 @@ BiTree<T>::BiTree(){
     root=nullptr;
 }
 
+//用于拷贝的函数，递归将源树的结点一一复制过来，返回新建的结点
 template<typename T>
 TreeNode<T>* BiTree<T>::Clone(TreeNode<T>* t)const{
     if(t==nullptr) return t;
@@ -54,11 +55,13 @@ TreeNode<T>* BiTree<T>::Clone(TreeNode<T>* t)const{
     return p;
 }
 
+//拷贝构造函数
 template<typename T>
 BiTree<T>::BiTree(const BiTree &o){
     root=Clone(o.root);
 }
 
+//拷贝赋值
 template<typename T>
 BiTree<T>& BiTree<T>::operator=(const BiTree &o){
     BiTree tmp(o);
